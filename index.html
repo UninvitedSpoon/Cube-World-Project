@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Project Cube World</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; font-family: Arial, sans-serif; color: #f4f4f5; }
+    body { background: #000000; }
+    #header { height: 114px; display: grid; grid-template-columns: minmax(190px, 235px) 112px 112px minmax(190px, 235px); align-items: center; justify-content: space-between; gap: 16px; padding: 8px 14px; background: #232428; position: relative; z-index: 5; }
+    .header-panel { background: #2d2e34; border-radius: 25px; min-height: 76px; display: flex; align-items: center; justify-content: center; text-align: center; }
+    #project-title { width: 100%; flex-direction: column; gap: 12px; padding: 12px; }
+    #project-title strong { font-size: 20px; }
+    #project-title span { font-size: 15px; }
+    #page-info { width: 100%; min-width: 0; padding: 12px 18px; flex-direction: column; gap: 8px; }
+    #page-info strong { font-size: 16px; }
+    #page-description { font-size: 12px; color: #c5c6cb; line-height: 1.35; }
+    .menu { position: relative; width: 112px; }
+    .menu-button { width: 100%; min-height: 52px; background: #2d2e34; color: white; border: 0; border-radius: 22px; cursor: pointer; font-size: 15px; }
+    .menu-button:hover, .menu-button[aria-expanded="true"] { background: #3c3e46; }
+    .menu-panel { position: absolute; right: 0; top: calc(100% + 10px); width: 225px; background: #2d2e34; padding: 8px; border-radius: 18px; box-shadow: 0 10px 25px #0007; display: none; }
+    .menu.open .menu-panel { display: block; }
+    .page-option { display: block; width: 100%; text-align: left; background: transparent; border: 0; color: white; border-radius: 12px; padding: 12px; cursor: pointer; }
+    .page-option:hover { background: #444650; }
+    .page-option.active { background: #5865f2; }
+    .toggle-option { display: flex; align-items: center; gap: 10px; padding: 11px 8px; cursor: pointer; font-size: 13px; }
+    .toggle-option input { accent-color: #5865f2; width: 17px; height: 17px; }
+    #scene { position: relative; height: calc(100vh - 114px); background: #000000; }
+    #c { display: block; width: 100%; height: 100%; }
+    #upload-screen { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; pointer-events: none; }
+    .upload-card { pointer-events: auto; padding: 30px; background: #292a30eb; border-radius: 22px; text-align: center; width: min(420px, 90%); box-shadow: 0 12px 40px #0005; }
+    .upload-card h2 { margin-top: 0; }
+    .upload-card label { display: block; text-align: left; margin: 16px 0; font-size: 14px; }
+    .upload-card input { display: block; margin-top: 8px; max-width: 100%; }
+    .upload-card button { border: 0; border-radius: 16px; padding: 12px 22px; color: white; background: #5865f2; cursor: pointer; }
+    .upload-card select { display: block; width: 100%; margin-top: 8px; padding: 10px; border: 1px solid #555762; border-radius: 12px; color: white; background: #202127; }
+    .performance-note { font-size: 12px; color: #bfc2ca; line-height: 1.4; }
+    .upload-card button:disabled { opacity: .45; cursor: not-allowed; }
+    #upload-message { color: #bfc2ca; font-size: 12px; }
+    @media (max-width: 800px) { #header { gap: 8px; padding: 8px; grid-template-columns: minmax(125px, 1fr) 78px 78px minmax(125px, 1fr); } #project-title strong { font-size: 15px; } #project-title span { font-size: 12px; } .menu { width: 78px; } .menu-button { font-size: 12px; } #page-description { display: none; } #page-info strong { font-size: 13px; } }
+    @media (max-width: 520px) { #header { height: auto; min-height: 114px; grid-template-columns: 1fr 1fr; } #project-title { grid-column: 1; grid-row: 1; } #page-info { grid-column: 2; grid-row: 1; } #pages-menu { grid-column: 1; grid-row: 2; } #toggles-menu { grid-column: 2; grid-row: 2; } .menu { width: 100%; } #scene { height: calc(100vh - 180px); } }
+  </style>
+</head>
+<body>
+  <header id="header">
+    <div id="project-title" class="header-panel"><strong>Project Cube World</strong><span>Jackson Krebs</span></div>
+    <div class="menu" id="pages-menu">
+      <button class="menu-button" id="pages-button" aria-expanded="false">Pages ▾</button>
+      <div class="menu-panel">
+        <button class="page-option active" data-page="home">Home</button>
+        <button class="page-option" data-page="procedural">Procedural World</button>
+        <button class="page-option" data-page="image">Image Data World</button>
+      </div>
+    </div>
+    <div class="menu" id="toggles-menu">
+      <button class="menu-button" id="toggles-button" aria-expanded="false">Toggles ▾</button>
+      <div class="menu-panel">
+        <label class="toggle-option"><input type="checkbox" data-setting="skyscape"> Skyscape</label>
+        <label class="toggle-option"><input type="checkbox" data-setting="skybox"> Skybox</label>
+        <label class="toggle-option"><input type="checkbox" data-setting="manualCamera"> Manual Camera Controls</label>
+      </div>
+    </div>
+    <div id="page-info" class="header-panel"><strong id="page-heading">Home Page</strong><span id="page-description">A rotating rainbow cube illuminated from above.</span></div>
+  </header>
+  <main id="scene">
+    <canvas id="c"></canvas>
+    <div id="upload-screen">
+      <div class="upload-card">
+        <h2>Image Data World</h2>
+        <p>Choose a color image and a matching height map.</p>
+        <label>Color Image<input id="color-file" type="file" accept="image/*"></label>
+        <label>Height Map<input id="height-file" type="file" accept="image/*"></label>
+        <label>Terrain Resolution
+          <select id="image-resolution">
+            <option value="128" selected>128 × 128 — Minimum</option>
+            <option value="192">192 × 192 — Medium</option>
+            <option value="256">256 × 256 — High</option>
+            <option value="320">320 × 320 — Maximum</option>
+          </select>
+        </label>
+        <p class="performance-note">Higher resolutions may take longer to generate on laptop browsers.</p>
+        <button id="generate-image" disabled>Generate World</button>
+        <p id="upload-message">Both files are required.</p>
+      </div>
+    </div>
+  </main>
+  <script src="index.js"></script>
+</body>
+</html>
